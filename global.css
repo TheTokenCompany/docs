@@ -228,6 +228,7 @@ table td:first-child code {
 .nav-anchor {
   color: #B3A497 !important;
   border: 1px solid #2C2B29 !important;
+  border-radius: 0.5rem !important;
 }
 .nav-anchor:hover {
   color: #E5C7A4 !important;
