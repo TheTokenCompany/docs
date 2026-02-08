@@ -39,7 +39,7 @@
         "groups": [
           {
             "group": "Docs",
-            "pages": ["index", "examples", "protect-text"]
+            "pages": ["index", "examples", "protect-text", "python-sdk"]
           }
         ]
       }
@@ -99,6 +99,18 @@
   },
   "styling": {
     "codeblocks": "dark"
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "/og-image.svg"
+    }
+  },
+  "errors": {
+    "404": {
+      "redirect": false,
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist. [Go back to the docs](/docs)."
+    }
   },
   "footer": {}
 }
