@@ -1,97 +1,131 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "API Reference"
+description: "Compress text for LLM inference in one API call."
 ---
 
-## Setting up
+## Quick Start
 
-Get your documentation site up and running in minutes.
+Get your API key by [creating an account](https://accounts.thetokencompany.com/sign-up). Choose your language:
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+<CodeGroup>
+```python Python
+import requests
 
-## Make it yours
+# 1. Call our API with the prompt to compress
+response = requests.post(
+    "https://api.thetokencompany.com/v1/compress",
+    headers={"Authorization": "Bearer YOUR_API_KEY"},
+    json={
+        "model": "bear-1.1",
+        "input": "Your long text to compress goes here...",
+        "compression_settings": {"aggressiveness": 0.1}
+    }
+)
 
-Design a docs site that looks great and empowers your users.
+# 2. Print the compressed prompt
+print(response.json()["output"])
+```
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+```javascript JavaScript
+// 1. Call our API with the prompt to compress
+const response = await fetch("https://api.thetokencompany.com/v1/compress", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_API_KEY"
+    },
+    body: JSON.stringify({
+        model: "bear-1.1",
+        input: "Your long text to compress goes here...",
+        compression_settings: { aggressiveness: 0.1 }
+    })
+});
 
-## Create beautiful pages
+// 2. Print the compressed prompt
+const data = await response.json();
+console.log(data.output);
+```
 
-Everything you need to create world-class documentation.
+```bash cURL
+curl -X POST https://api.thetokencompany.com/v1/compress \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "model": "bear-1.1",
+    "input": "Your long text to compress goes here...",
+    "compression_settings": {"aggressiveness": 0.1}
+  }'
+```
+</CodeGroup>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+## API Endpoint
 
-## Need inspiration?
+```
+POST https://api.thetokencompany.com/v1/compress
+```
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## Authentication
+
+Add your API key to the request header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Get your API key by [creating an account](https://accounts.thetokencompany.com/sign-up).
+
+## Request
+
+```json
+{
+    "model": "bear-1.1",
+    "input": "Your text to compress",
+    "compression_settings": {
+        "aggressiveness": 0.1
+    }
+}
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `model` | string | `bear-1.1` (recommended) or `bear-1` |
+| `input` | string | Text to compress |
+| `compression_settings.aggressiveness` | float | 0.0 to 1.0 — higher means more compression. Default: 0.5 |
+
+## Response
+
+```json
+{
+    "output": "Compressed text here",
+    "output_tokens": 5,
+    "original_input_tokens": 12
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `output` | Compressed text |
+| `output_tokens` | Token count after compression |
+| `original_input_tokens` | Original token count |
+
+## Protected Tokens
+
+Parts of the input text can be protected from compression by using the `<ttc_safe>` tags. See the full documentation on the [Protect Text](/protect-text) page.
+
+```
+compression applied here<ttc_safe>but not here</ttc_safe>
+```
+
+## Pricing
+
+| Model | Price |
+|-------|-------|
+| `bear-1.1` | $0.05 / 1M compressed tokens |
+
+### What are compressed tokens?
+
+Compressed tokens are the tokens that were removed during compression — the difference between your input and output token counts.
+
+<Info>
+**Example:** If you send 500 tokens and receive 200 tokens back, you are charged for the 300 tokens that were removed. The 200 remaining tokens are free.
+</Info>

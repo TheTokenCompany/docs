@@ -1,0 +1,42 @@
+---
+title: "Protect Text"
+description: "Wrap anything in ttc_safe tags to protect it from being compressed."
+---
+
+<Warning>This feature is experimental.</Warning>
+
+## Syntax
+
+```
+<ttc_safe>This text will not be compressed</ttc_safe>
+
+Everything outside the tags will be compressed normally.
+```
+
+No attributes needed. Just the plain tags.
+
+## Examples
+
+This is especially helpful for chat-formatted prompts, where the turn labels are crucial for the model to parse the conversation correctly.
+
+**Input:**
+
+```
+<ttc_safe>system:</ttc_safe> You are a helpful assistant that provides detailed information about software products and their pricing plans.
+<ttc_safe>agent:</ttc_safe> Hello! I'd be happy to help you find information about software products and pricing. What would you like to know?
+<ttc_safe>user:</ttc_safe> I'm looking for information about project management software that would work for a small team of about 10 people.
+<ttc_safe>agent:</ttc_safe> I'd be happy to help you find the right project management software for your small team. Let me share some options with you.
+<ttc_safe>user:</ttc_safe> That sounds great. Can you also include pricing information?
+```
+
+**Output:**
+
+```
+system: You are helpful assistant provides detailed info about software products pricing plans.
+agent: Hello! happy help find info software products pricing. What like know?
+user: looking for info project management software small team about 10 people.
+agent: happy help find right project management software small team. share options.
+user: sounds great. include pricing info?
+```
+
+Notice how the turn labels (`system:`, `agent:`, `user:`) are preserved exactly as-is, while the surrounding content is compressed. This ensures the model can still parse the conversation structure correctly.

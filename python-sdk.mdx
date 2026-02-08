@@ -1,0 +1,278 @@
+---
+title: "Python SDK"
+description: "The official Python SDK for The Token Company API. Compress text with a simple, Pythonic interface."
+---
+
+<Card title="View on GitHub" icon="github" href="https://github.com/TheTokenCompany/tokenc-python-sdk" horizontal>
+  Source code and contributions welcome.
+</Card>
+
+## Installation
+
+Install the SDK using pip:
+
+```bash
+pip install tokenc
+```
+
+## Quick Start
+
+Get started with just a few lines of code:
+
+```python
+from tokenc import TokenClient
+
+client = TokenClient(api_key="your-api-key")
+
+response = client.compress_input(
+    input="Your text that needs compression for optimal token usage.",
+    aggressiveness=0.1
+)
+
+print(f"Compressed text: {response.output}")
+print(f"Original tokens: {response.original_input_tokens}")
+print(f"Compressed tokens: {response.output_tokens}")
+print(f"Tokens saved: {response.tokens_saved}")
+print(f"Compression ratio: {response.compression_ratio:.2f}x")
+```
+
+## API Reference
+
+### TokenClient
+
+**Constructor:**
+
+```
+TokenClient(api_key: str, base_url: str = ..., timeout: int = 30)
+```
+
+<ResponseField name="api_key" type="str" required>
+  Your API key for authentication.
+</ResponseField>
+
+<ResponseField name="base_url" type="str">
+  Base URL for the API.
+</ResponseField>
+
+<ResponseField name="timeout" type="int" default="30">
+  Request timeout in seconds.
+</ResponseField>
+
+### compress_input()
+
+Compress text input for optimized LLM inference.
+
+<ResponseField name="input" type="str" required>
+  The text to compress.
+</ResponseField>
+
+<ResponseField name="model" type="str" default="bear-1.1">
+  Model to use. `bear-1.1` (recommended) or `bear-1`.
+</ResponseField>
+
+<ResponseField name="aggressiveness" type="float" default="0.5">
+  Compression intensity 0.0-1.0.
+</ResponseField>
+
+<ResponseField name="max_output_tokens" type="int | None">
+  Maximum token count for output.
+</ResponseField>
+
+<ResponseField name="min_output_tokens" type="int | None">
+  Minimum token count for output.
+</ResponseField>
+
+<ResponseField name="protect_json" type="bool" default="false">
+  Prevents compressing JSON objects.
+</ResponseField>
+
+<ResponseField name="compression_settings" type="CompressionSettings | None">
+  Custom settings object (alternative to individual params).
+</ResponseField>
+
+**Returns:** `CompressResponse`
+
+### CompressionSettings
+
+Dataclass for compression configuration.
+
+<ResponseField name="aggressiveness" type="float">
+  Compression intensity 0.0-1.0.
+</ResponseField>
+
+<ResponseField name="max_output_tokens" type="int | None">
+  Optional maximum output tokens.
+</ResponseField>
+
+<ResponseField name="min_output_tokens" type="int | None">
+  Optional minimum output tokens.
+</ResponseField>
+
+<ResponseField name="protect_json" type="bool" default="false">
+  Prevents compressing JSON objects.
+</ResponseField>
+
+### CompressResponse
+
+Dataclass for compression results with built-in metrics.
+
+```python
+# CompressResponse attributes:
+response.output                  # str: The compressed text
+response.output_tokens           # int: Token count of compressed output
+response.original_input_tokens   # int: Token count of original input
+response.compression_time        # float: Time taken to compress (seconds)
+
+# Computed properties:
+response.tokens_saved            # int: Number of tokens saved
+response.compression_ratio       # float: Ratio of original to compressed tokens
+response.compression_percentage  # float: Percentage reduction in tokens
+```
+
+## Examples
+
+### With OpenAI
+
+Compress prompts before sending to OpenAI to reduce costs:
+
+```python
+from tokenc import TokenClient
+from openai import OpenAI
+
+# Initialize clients
+tc = TokenClient(api_key="your-ttc-api-key")
+openai = OpenAI(api_key="your-openai-api-key")
+
+# Your prompt
+prompt = """
+Please explain the process of photosynthesis in detail,
+including the light-dependent and light-independent reactions,
+the role of chlorophyll, and how plants convert CO2 and water
+into glucose and oxygen. Thank you very much for your help!
+"""
+
+# Compress the prompt
+compressed = tc.compress_input(
+    input=prompt,
+    aggressiveness=0.6
+)
+
+print(f"Compressed from {compressed.original_input_tokens} to {compressed.output_tokens} tokens")
+print(f"Compression: {compressed.compression_percentage:.1f}%")
+
+# Use compressed prompt with OpenAI
+response = openai.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": compressed.output}]
+)
+
+print(response.choices[0].message.content)
+```
+
+### Using CompressionSettings
+
+Use a settings object for more control:
+
+```python
+from tokenc import TokenClient, CompressionSettings
+
+client = TokenClient(api_key="your-api-key")
+
+# Create custom compression settings
+settings = CompressionSettings(
+    aggressiveness=0.7,
+    max_output_tokens=100,
+    min_output_tokens=50,
+    protect_json=False
+)
+
+response = client.compress_input(
+    input="Your text here...",
+    compression_settings=settings
+)
+
+print(f"Compression percentage: {response.compression_percentage:.1f}%")
+```
+
+### Context Manager
+
+Use as a context manager for automatic cleanup:
+
+```python
+from tokenc import TokenClient
+
+with TokenClient(api_key="your-api-key") as client:
+    response = client.compress_input(
+        input="Your text here...",
+        aggressiveness=0.6
+    )
+    print(response.output)
+# Session automatically closed
+```
+
+### Compression Levels
+
+Compare different compression levels:
+
+```python
+from tokenc import TokenClient
+
+client = TokenClient(api_key="your-api-key")
+
+text = "Your long text here..."
+
+# Light compression - preserve most content
+light = client.compress_input(input=text, aggressiveness=0.2)
+
+# Moderate compression - balanced approach
+moderate = client.compress_input(input=text, aggressiveness=0.5)
+
+# Aggressive compression - maximum savings
+aggressive = client.compress_input(input=text, aggressiveness=0.8)
+```
+
+## Error Handling
+
+The SDK provides specific exception types for different error conditions:
+
+```python
+from tokenc import (
+    TokenClient,
+    AuthenticationError,
+    InvalidRequestError,
+    RateLimitError,
+    APIError
+)
+
+client = TokenClient(api_key="your-api-key")
+
+try:
+    response = client.compress_input(input="Your text...")
+except AuthenticationError:
+    print("Invalid API key")
+except InvalidRequestError as e:
+    print(f"Invalid request: {e}")
+except RateLimitError:
+    print("Rate limit exceeded, please wait")
+except APIError as e:
+    print(f"API error: {e}")
+```
+
+| Exception | Description |
+|-----------|-------------|
+| `AuthenticationError` | Invalid API key |
+| `InvalidRequestError` | Invalid request parameters |
+| `RateLimitError` | Rate limit exceeded |
+| `APIError` | Other API errors |
+
+## Aggressiveness Guide
+
+<Tip>
+**Recommended:** Start with `0.1` for most use cases. Increase gradually if you need more savings.
+</Tip>
+
+| Range | Level | Description |
+|-------|-------|-------------|
+| `0.1–0.3` | Light | Removes only obvious filler, safe for all use cases |
+| `0.4–0.6` | Moderate | Good balance of compression and quality |
+| `0.7–0.9` | Aggressive | Significant savings, best for cost-sensitive workloads |

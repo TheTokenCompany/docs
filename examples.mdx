@@ -1,0 +1,190 @@
+---
+title: "Code Examples"
+description: "Use The Token Company as middleware between your input and any LLM provider. Compress messages before sending them to reduce costs."
+---
+
+## OpenAI
+
+<CodeGroup>
+```python openai_example.py
+import requests
+from openai import OpenAI
+
+# Step 1: Compress the input
+response = requests.post(
+    "https://api.thetokencompany.com/v1/compress",
+    headers={"Authorization": "Bearer YOUR_TTC_API_KEY"},
+    json={
+        "model": "bear-1.1",
+        "input": "Your long text to compress goes here...",
+        "compression_settings": {"aggressiveness": 0.1}
+    }
+)
+compressed_text = response.json()["output"]
+
+# Step 2: Send compressed text to OpenAI
+client = OpenAI()
+completion = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "user", "content": compressed_text}
+    ]
+)
+print(completion.choices[0].message.content)
+```
+
+```typescript openai_example.ts
+import OpenAI from "openai";
+
+// Step 1: Compress the input
+const compressResponse = await fetch("https://api.thetokencompany.com/v1/compress", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_TTC_API_KEY"
+    },
+    body: JSON.stringify({
+        model: "bear-1.1",
+        input: "Your long text to compress goes here...",
+        compression_settings: { aggressiveness: 0.1 }
+    })
+});
+const { output: compressedText } = await compressResponse.json();
+
+// Step 2: Send compressed text to OpenAI
+const openai = new OpenAI();
+const completion = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: compressedText }]
+});
+console.log(completion.choices[0].message.content);
+```
+</CodeGroup>
+
+## Claude
+
+<CodeGroup>
+```python claude_example.py
+import requests
+import anthropic
+
+# Step 1: Compress the input
+response = requests.post(
+    "https://api.thetokencompany.com/v1/compress",
+    headers={"Authorization": "Bearer YOUR_TTC_API_KEY"},
+    json={
+        "model": "bear-1.1",
+        "input": "Your long text to compress goes here...",
+        "compression_settings": {"aggressiveness": 0.1}
+    }
+)
+compressed_text = response.json()["output"]
+
+# Step 2: Send compressed text to Claude
+client = anthropic.Anthropic()
+message = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    max_tokens=1024,
+    messages=[
+        {"role": "user", "content": compressed_text}
+    ]
+)
+print(message.content[0].text)
+```
+
+```typescript claude_example.ts
+import Anthropic from "@anthropic-ai/sdk";
+
+// Step 1: Compress the input
+const compressResponse = await fetch("https://api.thetokencompany.com/v1/compress", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_TTC_API_KEY"
+    },
+    body: JSON.stringify({
+        model: "bear-1.1",
+        input: "Your long text to compress goes here...",
+        compression_settings: { aggressiveness: 0.1 }
+    })
+});
+const { output: compressedText } = await compressResponse.json();
+
+// Step 2: Send compressed text to Claude
+const anthropic = new Anthropic();
+const message = await anthropic.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 1024,
+    messages: [{ role: "user", content: compressedText }]
+});
+console.log(message.content[0].text);
+```
+</CodeGroup>
+
+## OpenRouter
+
+<CodeGroup>
+```python openrouter_example.py
+import requests
+
+# Step 1: Compress the input
+response = requests.post(
+    "https://api.thetokencompany.com/v1/compress",
+    headers={"Authorization": "Bearer YOUR_TTC_API_KEY"},
+    json={
+        "model": "bear-1.1",
+        "input": "Your long text to compress goes here...",
+        "compression_settings": {"aggressiveness": 0.1}
+    }
+)
+compressed_text = response.json()["output"]
+
+# Step 2: Send compressed text via OpenRouter
+response = requests.post(
+    "https://openrouter.ai/api/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer YOUR_OPENROUTER_API_KEY",
+        "Content-Type": "application/json"
+    },
+    json={
+        "model": "openai/gpt-4o",
+        "messages": [
+            {"role": "user", "content": compressed_text}
+        ]
+    }
+)
+print(response.json()["choices"][0]["message"]["content"])
+```
+
+```typescript openrouter_example.ts
+// Step 1: Compress the input
+const compressResponse = await fetch("https://api.thetokencompany.com/v1/compress", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_TTC_API_KEY"
+    },
+    body: JSON.stringify({
+        model: "bear-1.1",
+        input: "Your long text to compress goes here...",
+        compression_settings: { aggressiveness: 0.1 }
+    })
+});
+const { output: compressedText } = await compressResponse.json();
+
+// Step 2: Send compressed text via OpenRouter
+const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer YOUR_OPENROUTER_API_KEY"
+    },
+    body: JSON.stringify({
+        model: "openai/gpt-4o",
+        messages: [{ role: "user", content: compressedText }]
+    })
+});
+const data = await response.json();
+console.log(data.choices[0].message.content);
+```
+</CodeGroup>

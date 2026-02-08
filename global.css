@@ -1,0 +1,290 @@
+/*
+ * The Token Company — match landing page theme
+ *
+ *   bg:        #101010
+ *   surface:   #1E1D1D
+ *   border:    #2C2B29
+ *   muted:     #B3A497
+ *   text:      #E5C7A4
+ *   accent:    #FFFFFF
+ */
+
+/* ── Colour variables (shadcn / Mintlify) ── */
+.dark {
+  --background:           0 0% 6%;
+  --foreground:           32 55% 77%;
+
+  --card:                 0 2% 12%;
+  --card-foreground:      32 55% 77%;
+
+  --popover:              0 2% 12%;
+  --popover-foreground:   32 55% 77%;
+
+  --secondary:            0 2% 12%;
+  --secondary-foreground: 28 16% 65%;
+
+  --muted:                0 2% 12%;
+  --muted-foreground:     28 16% 65%;
+
+  --accent:               0 2% 12%;
+  --accent-foreground:    32 55% 77%;
+
+  --border:               40 4% 17%;
+  --input:                40 4% 17%;
+  --ring:                 32 55% 77%;
+}
+
+.dark [data-sidebar] {
+  --sidebar-background:            0 0% 6%;
+  --sidebar-foreground:            32 55% 77%;
+  --sidebar-border:                40 4% 17%;
+  --sidebar-accent:                0 2% 12%;
+  --sidebar-accent-foreground:     32 55% 77%;
+  --sidebar-muted:                 28 16% 65%;
+}
+
+/* ── Selection highlight (green, matching landing) ── */
+::selection {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+/* ── Navbar ── */
+#navbar {
+  background: rgba(16, 16, 16, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid #2C2B29 !important;
+}
+
+/* Logo size — match landing ~190×40 */
+.nav-logo img,
+.nav-logo svg {
+  height: 28px !important;
+  width: auto !important;
+}
+
+/* Navbar links — muted by default, lighter on hover */
+.navbar-link {
+  color: #B3A497 !important;
+  font-size: 0.875rem !important;
+}
+.navbar-link:hover {
+  color: #E5C7A4 !important;
+}
+
+/* Get Started button — white bg, dark text (matching landing) */
+#topbar-cta-button {
+  background: #ffffff !important;
+  color: #101010 !important;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+#topbar-cta-button:hover {
+  opacity: 0.9 !important;
+}
+
+/* ── Headings — white like landing ── */
+h1, h2, h3, h4 {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
+}
+
+h1 {
+  font-size: 1.875rem !important;
+}
+
+h2 {
+  font-size: 1.125rem !important;
+}
+
+/* ── Body text — warm tan ── */
+.mdx-content p,
+.mdx-content li {
+  color: #B3A497;
+}
+
+/* ── Links ── */
+.mdx-content a {
+  color: #ffffff;
+}
+.mdx-content a:hover {
+  text-decoration: underline;
+}
+
+/* ── Section dividers (border-top on h2, matching landing sections) ── */
+.mdx-content h2 {
+  border-top: 1px solid #2C2B29;
+  padding-top: 2.5rem;
+  margin-top: 2.5rem;
+}
+
+/* First h2 after title shouldn't double-border */
+.mdx-content h2:first-of-type {
+  border-top: 1px solid #2C2B29;
+}
+
+/* ── Code blocks — surface bg with border ── */
+pre {
+  background: #1E1D1D !important;
+  border: 1px solid #2C2B29 !important;
+  border-radius: 0.5rem !important;
+}
+
+pre code {
+  color: #ffffff !important;
+  font-size: 0.875rem !important;
+  line-height: 1.625 !important;
+}
+
+/* Inline code */
+:not(pre) > code {
+  background: #1E1D1D !important;
+  border: none !important;
+  color: #E5C7A4 !important;
+  padding: 0.125rem 0.375rem !important;
+  border-radius: 0.25rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Code group / tabs header */
+.code-group > div:first-child {
+  background: rgba(30, 29, 29, 0.5) !important;
+  border-bottom: 1px solid #2C2B29 !important;
+}
+
+/* ── Tables — match landing style ── */
+table {
+  width: 100%;
+}
+
+table th {
+  color: #B3A497 !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding-bottom: 0.75rem !important;
+}
+
+table td {
+  color: #B3A497 !important;
+  font-size: 0.875rem !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  border-top: 1px solid #2C2B29 !important;
+}
+
+/* Parameter names in mono */
+table td:first-child code {
+  font-family: var(--font-mono, ui-monospace, monospace) !important;
+  color: #E5C7A4 !important;
+}
+
+/* ── Cards ── */
+.card {
+  background: #1E1D1D !important;
+  border: 1px solid #2C2B29 !important;
+}
+
+.card:hover {
+  border-color: #B3A497 !important;
+}
+
+/* ── Callouts (Info, Warning) ── */
+.callout {
+  background: #1E1D1D !important;
+  border: 1px solid #2C2B29 !important;
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  background: #101010 !important;
+  border-right: 1px solid #2C2B29 !important;
+}
+
+#sidebar-content {
+  color: #B3A497 !important;
+}
+
+/* Active sidebar item */
+.sidebar-group a[data-active="true"],
+#sidebar-content a[data-active="true"] {
+  background: #1E1D1D !important;
+  color: #E5C7A4 !important;
+}
+
+/* Sidebar group headers */
+.sidebar-group-header {
+  color: #B3A497 !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* ── Anchors (Python SDK, npm) ── */
+.nav-anchor {
+  color: #B3A497 !important;
+  border: 1px solid #2C2B29 !important;
+}
+.nav-anchor:hover {
+  color: #E5C7A4 !important;
+  border-color: #B3A497 !important;
+}
+
+/* ── Footer — minimal ── */
+footer {
+  border-top: 1px solid #2C2B29 !important;
+  background: #101010 !important;
+}
+
+/* ── Scrollbar (matching landing) ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2C2B29 transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #2C2B29;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B3A497;
+}
+
+/* ── Pagination (prev/next links) ── */
+.pagination-next,
+.pagination-prev {
+  background: #1E1D1D !important;
+  border: 1px solid #2C2B29 !important;
+}
+.pagination-next:hover,
+.pagination-prev:hover {
+  border-color: #B3A497 !important;
+}
+
+/* ── Search ── */
+#search-bar-entry,
+#search-bar-entry-mobile {
+  background: #1E1D1D !important;
+  border: 1px solid #2C2B29 !important;
+  color: #B3A497 !important;
+}
+
+/* ── Table of contents ── */
+#table-of-contents-content a {
+  color: #B3A497 !important;
+}
+#table-of-contents-content a:hover,
+#table-of-contents-content a[data-active="true"] {
+  color: #E5C7A4 !important;
+}
