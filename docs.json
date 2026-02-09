@@ -61,7 +61,8 @@
   },
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://thetokencompany.com"
   },
   "navbar": {
     "links": [
