@@ -11,6 +11,10 @@ Add the `Content-Encoding: gzip` header and send the gzip-compressed JSON body. 
 **We recommend gzip for every request.** Client-side compression takes under 1ms for most payloads and is never slower end-to-end. In our tests, 100K tokens completed in under 100ms when gzip achieved over 90% compression.
 </Tip>
 
+<Info>
+If you're using the [Python SDK](/python-sdk) or the [npm package](https://github.com/TheTokenCompany/tokenc-npm-sdk), gzip is enabled by default — no extra setup needed.
+</Info>
+
 ## Examples
 
 <CodeGroup>

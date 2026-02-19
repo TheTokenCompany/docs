@@ -110,7 +110,7 @@ Get your API key by [creating an account](https://accounts.thetokencompany.com/s
 
 ## Gzip Compression
 
-We recommend gzip for every request — overhead is under 1ms and it's up to 2.5x faster for large payloads. Add `Content-Encoding: gzip` and send the compressed JSON body. See the full guide and benchmarks on the [Gzip Compression](/gzip) page.
+We recommend gzip for every request — overhead is under 1ms and it's up to 2.5x faster for large payloads. The [Python SDK](/python-sdk) and [npm package](https://github.com/TheTokenCompany/tokenc-npm-sdk) enable gzip by default. For direct API usage, add `Content-Encoding: gzip` and send the compressed JSON body. See the full guide and benchmarks on the [Gzip Compression](/gzip) page.
 
 ```python
 import gzip, json, requests
