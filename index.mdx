@@ -16,7 +16,7 @@ response = requests.post(
     "https://api.thetokencompany.com/v1/compress",
     headers={"Authorization": "Bearer YOUR_API_KEY"},
     json={
-        "model": "bear-1.1",
+        "model": "bear-1.2",
         "input": "Your long text to compress goes here...",
         "compression_settings": {"aggressiveness": 0.1}
     }
@@ -35,7 +35,7 @@ const response = await fetch("https://api.thetokencompany.com/v1/compress", {
         "Authorization": "Bearer YOUR_API_KEY"
     },
     body: JSON.stringify({
-        model: "bear-1.1",
+        model: "bear-1.2",
         input: "Your long text to compress goes here...",
         compression_settings: { aggressiveness: 0.1 }
     })
@@ -51,7 +51,7 @@ curl -X POST https://api.thetokencompany.com/v1/compress \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
-    "model": "bear-1.1",
+    "model": "bear-1.2",
     "input": "Your long text to compress goes here...",
     "compression_settings": {"aggressiveness": 0.1}
   }'
@@ -78,7 +78,7 @@ Get your API key by [creating an account](https://accounts.thetokencompany.com/s
 
 ```json
 {
-    "model": "bear-1.1",
+    "model": "bear-1.2",
     "input": "Your text to compress",
     "compression_settings": {
         "aggressiveness": 0.1
@@ -88,7 +88,7 @@ Get your API key by [creating an account](https://accounts.thetokencompany.com/s
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `model` | string | `bear-1.1` (recommended) or `bear-1` |
+| `model` | string | `bear-1.2` (recommended), `bear-1.1`, or `bear-1` |
 | `input` | string | Text to compress |
 | `compression_settings.aggressiveness` | float | 0.0 to 1.0 — higher means more compression. Default: 0.5 |
 
@@ -108,6 +108,92 @@ Get your API key by [creating an account](https://accounts.thetokencompany.com/s
 | `output_tokens` | Token count after compression |
 | `original_input_tokens` | Original token count |
 
+## Gzip Compression
+
+For large payloads, you can gzip the request body to reduce upload time. Add the `Content-Encoding: gzip` header and send the gzip-compressed JSON body. The API will automatically decompress your request and gzip-compress the response.
+
+<Tip>
+**Recommended for inputs over 10,000 tokens.** In our tests, 100K tokens completed in under 100ms when gzip achieved over 90% compression.
+</Tip>
+
+### Throughput benchmarks
+
+Real end-to-end measurements against the live API with realistic text, 20 runs per data point (middle 50% averaged). Throughput varies based on how much gzip can compress your content and reduce network latency.
+
+**Over the internet:**
+
+| Tokens | Raw | Gzip | Speedup |
+|--------|-----|------|---------|
+| 10,000 | 97K tok/s | 170K tok/s | 1.8x |
+| 100,000 | 259K tok/s | 484K tok/s | 1.9x |
+| 500,000 | 416K tok/s | 717K tok/s | 1.7x |
+| 1,000,000 | 416K tok/s | 717K tok/s | 1.7x |
+
+With gzip, 100K tokens completes in **~90ms** and 1M tokens in **~920ms**. Throughput scales further with more compressible content (templated prompts, repeated structures).
+
+<CodeGroup>
+```python Python
+import gzip
+import json
+import requests
+
+payload = json.dumps({
+    "model": "bear-1.2",
+    "input": very_long_text,
+    "compression_settings": {"aggressiveness": 0.1}
+}).encode()
+
+response = requests.post(
+    "https://api.thetokencompany.com/v1/compress",
+    headers={
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip"
+    },
+    data=gzip.compress(payload)
+)
+
+print(response.json()["output"])
+```
+
+```javascript JavaScript
+const payload = JSON.stringify({
+    model: "bear-1.2",
+    input: veryLongText,
+    compression_settings: { aggressiveness: 0.1 }
+});
+
+// Node.js
+const { gzipSync } = await import("node:zlib");
+
+const response = await fetch("https://api.thetokencompany.com/v1/compress", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip",
+        "Authorization": "Bearer YOUR_API_KEY"
+    },
+    body: gzipSync(payload)
+});
+
+const data = await response.json();
+console.log(data.output);
+```
+
+```bash cURL
+# Compress the payload, then send it
+echo -n '{"model":"bear-1.2","input":"Your long text...","compression_settings":{"aggressiveness":0.1}}' \
+  | gzip \
+  | curl -X POST https://api.thetokencompany.com/v1/compress \
+    -H "Content-Type: application/json" \
+    -H "Content-Encoding: gzip" \
+    -H "Authorization: Bearer YOUR_API_KEY" \
+    --data-binary @-
+```
+</CodeGroup>
+
+No changes are needed for small requests — gzip is fully backwards compatible. Requests without `Content-Encoding: gzip` work exactly as before.
+
 ## Protected Tokens
 
 Parts of the input text can be protected from compression by using the `<ttc_safe>` tags. See the full documentation on the [Protect Text](/protect-text) page.
@@ -120,6 +206,7 @@ compression applied here<ttc_safe>but not here</ttc_safe>
 
 | Model | Price |
 |-------|-------|
+| `bear-1.2` | $0.05 / 1M compressed tokens |
 | `bear-1.1` | $0.05 / 1M compressed tokens |
 
 ### What are compressed tokens?
