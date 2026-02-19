@@ -1,0 +1,256 @@
+---
+title: "npm SDK"
+description: "The official Node.js/TypeScript SDK for The Token Company API. Compress text with a simple, type-safe interface."
+---
+
+<Card title="View on GitHub" icon="github" href="https://github.com/TheTokenCompany/tokenc-npm-sdk" horizontal>
+  Source code and contributions welcome.
+</Card>
+
+## Installation
+
+Install the SDK using npm:
+
+```bash
+npm install tokenc
+```
+
+## Quick Start
+
+Get started with just a few lines of code:
+
+```typescript
+import { TokenClient } from "tokenc";
+
+const client = new TokenClient({ apiKey: "your-api-key" });
+
+const response = await client.compressInput({
+    input: "Your text that needs compression for optimal token usage.",
+    aggressiveness: 0.1
+});
+
+console.log(`Compressed text: ${response.output}`);
+console.log(`Original tokens: ${response.originalInputTokens}`);
+console.log(`Compressed tokens: ${response.outputTokens}`);
+console.log(`Tokens saved: ${response.tokensSaved}`);
+console.log(`Compression ratio: ${response.compressionRatio.toFixed(2)}x`);
+```
+
+## API Reference
+
+### TokenClient
+
+**Constructor:**
+
+```typescript
+new TokenClient(options: TokenClientOptions)
+```
+
+<ResponseField name="apiKey" type="string" required>
+  Your API key for authentication.
+</ResponseField>
+
+<ResponseField name="baseUrl" type="string">
+  Base URL for the API.
+</ResponseField>
+
+<ResponseField name="timeout" type="number" default="30000">
+  Request timeout in milliseconds.
+</ResponseField>
+
+### compressInput()
+
+Compress text input for optimized LLM inference.
+
+<ResponseField name="input" type="string" required>
+  The text to compress.
+</ResponseField>
+
+<ResponseField name="model" type="string" default="bear-1.2">
+  Model to use. `bear-1.2` (recommended), `bear-1.1`, or `bear-1`.
+</ResponseField>
+
+<ResponseField name="aggressiveness" type="number" default="0.5">
+  Compression intensity 0.0-1.0.
+</ResponseField>
+
+<ResponseField name="maxOutputTokens" type="number | null">
+  Maximum token count for output.
+</ResponseField>
+
+<ResponseField name="minOutputTokens" type="number | null">
+  Minimum token count for output.
+</ResponseField>
+
+<ResponseField name="compressionSettings" type="CompressionSettings">
+  Custom settings object (alternative to individual params).
+</ResponseField>
+
+**Returns:** `Promise<CompressResponse>`
+
+### CompressionSettings
+
+Class for compression configuration.
+
+<ResponseField name="aggressiveness" type="number">
+  Compression intensity 0.0-1.0.
+</ResponseField>
+
+<ResponseField name="maxOutputTokens" type="number | null">
+  Optional maximum output tokens.
+</ResponseField>
+
+<ResponseField name="minOutputTokens" type="number | null">
+  Optional minimum output tokens.
+</ResponseField>
+
+### CompressResponse
+
+Class for compression results with built-in metrics.
+
+```typescript
+// CompressResponse properties:
+response.output                  // string: The compressed text
+response.outputTokens            // number: Token count of compressed output
+response.originalInputTokens     // number: Token count of original input
+response.compressionTime         // number: Time taken to compress (seconds)
+
+// Computed properties:
+response.tokensSaved             // number: Number of tokens saved
+response.compressionRatio        // number: Ratio of original to compressed tokens
+response.compressionPercentage   // number: Percentage reduction in tokens
+```
+
+## Examples
+
+### With OpenAI
+
+Compress prompts before sending to OpenAI to reduce costs:
+
+```typescript
+import { TokenClient } from "tokenc";
+import OpenAI from "openai";
+
+// Initialize clients
+const tc = new TokenClient({ apiKey: "your-ttc-api-key" });
+const openai = new OpenAI();
+
+// Your prompt
+const prompt = `Please explain the process of photosynthesis in detail,
+including the light-dependent and light-independent reactions,
+the role of chlorophyll, and how plants convert CO2 and water
+into glucose and oxygen. Thank you very much for your help!`;
+
+// Compress the prompt
+const compressed = await tc.compressInput({
+    input: prompt,
+    aggressiveness: 0.6
+});
+
+console.log(`Compressed from ${compressed.originalInputTokens} to ${compressed.outputTokens} tokens`);
+console.log(`Compression: ${compressed.compressionPercentage.toFixed(1)}%`);
+
+// Use compressed prompt with OpenAI
+const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: compressed.output }]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+### Using CompressionSettings
+
+Use a settings object for more control:
+
+```typescript
+import { TokenClient, CompressionSettings } from "tokenc";
+
+const client = new TokenClient({ apiKey: "your-api-key" });
+
+// Create custom compression settings
+const settings = new CompressionSettings({
+    aggressiveness: 0.7,
+    maxOutputTokens: 100,
+    minOutputTokens: 50
+});
+
+const response = await client.compressInput({
+    input: "Your text here...",
+    compressionSettings: settings
+});
+
+console.log(`Compression percentage: ${response.compressionPercentage.toFixed(1)}%`);
+```
+
+### Compression Levels
+
+Compare different compression levels:
+
+```typescript
+import { TokenClient } from "tokenc";
+
+const client = new TokenClient({ apiKey: "your-api-key" });
+
+const text = "Your long text here...";
+
+// Light compression - preserve most content
+const light = await client.compressInput({ input: text, aggressiveness: 0.2 });
+
+// Moderate compression - balanced approach
+const moderate = await client.compressInput({ input: text, aggressiveness: 0.5 });
+
+// Aggressive compression - maximum savings
+const aggressive = await client.compressInput({ input: text, aggressiveness: 0.8 });
+```
+
+## Error Handling
+
+The SDK provides specific error types for different error conditions:
+
+```typescript
+import {
+    TokenClient,
+    AuthenticationError,
+    InvalidRequestError,
+    RateLimitError,
+    APIError
+} from "tokenc";
+
+const client = new TokenClient({ apiKey: "your-api-key" });
+
+try {
+    const response = await client.compressInput({ input: "Your text..." });
+} catch (error) {
+    if (error instanceof AuthenticationError) {
+        console.log("Invalid API key");
+    } else if (error instanceof InvalidRequestError) {
+        console.log(`Invalid request: ${error.message}`);
+    } else if (error instanceof RateLimitError) {
+        console.log("Rate limit exceeded, please wait");
+    } else if (error instanceof APIError) {
+        console.log(`API error: ${error.message}`);
+    }
+}
+```
+
+| Exception | Description |
+|-----------|-------------|
+| `AuthenticationError` | Invalid API key |
+| `InvalidRequestError` | Invalid request parameters |
+| `PaymentRequiredError` | Insufficient balance |
+| `RequestTooLargeError` | Request exceeds size limits |
+| `RateLimitError` | Rate limit exceeded |
+| `APIError` | Other API errors |
+
+## Aggressiveness Guide
+
+<Tip>
+**Recommended:** Start with `0.1` for most use cases. Increase gradually if you need more savings.
+</Tip>
+
+| Range | Level | Description |
+|-------|-------|-------------|
+| `0.1–0.3` | Light | Removes only obvious filler, safe for all use cases |
+| `0.4–0.6` | Moderate | Good balance of compression and quality |
+| `0.7–0.9` | Aggressive | Significant savings, best for cost-sensitive workloads |
