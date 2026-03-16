@@ -1,0 +1,70 @@
+---
+title: "Data Retention"
+description: "How to disable data retention for your account and what it means for your data."
+---
+
+## Zero Data Retention
+
+You can request **zero data retention** for your account. With this enabled, your prompts and outputs are **never stored in any database**. We do not train on your data and we do not share it with third parties.
+
+Zero data retention is designed for users and organizations that require strict control over how their data is handled. Whether you are working with sensitive information, operating under regulatory requirements, or simply prefer maximum privacy, this option ensures that no prompt or output content persists beyond what is technically necessary to serve your request.
+
+### What we retain
+
+The only data we retain is minimal **request metadata** maintaining privacy:
+
+| Data                   | Retained |
+| ---------------------- | -------- |
+| Timestamp              | Yes      |
+| Input length (tokens)  | Yes      |
+| Output length (tokens) | Yes      |
+| Prompts and outputs    | No       |
+
+This metadata is used solely for billing, rate limiting, and usage analytics on your dashboard. It contains no information about the content of your requests or responses. Token counts reflect only the length of the input and output, not the actual text. At no point is any semantic or textual content of your prompts or outputs included in the metadata we store.
+
+### How to enable
+
+<Info>
+  To enable zero data retention, contact support at
+  [rasmus@thetokencompany.com](mailto:rasmus@thetokencompany.com) or reach out
+  through the [Contact](https://thetokencompany.com/contact) page.
+</Info>
+
+Once you reach out, our team will enable zero data retention on your account and confirm the change. The process is straightforward and typically completed within one business day. There is no additional cost associated with enabling this feature, and it applies to all API requests made under your account going forward.
+
+## How It Works
+
+To process your requests, prompts and outputs are temporarily held in memory and on disk during inference, plus a short **3600-second cache** window. After that, they are automatically and permanently deleted. This cache is private and automatic removal is enabled by default for all users.
+
+The temporary cache exists to support features like instant responses. During this window, the data is stored in an isolated environment that is not accessible to any other system. Once the 3600-second window expires, the data is purged from all storage layers. No backups or copies are made, and there is no mechanism to recover the data after deletion.
+
+This approach ensures that your data is available only for the minimum time required to complete and deliver your request, while still providing a reliable and performant API experience.
+
+<Warning>
+  With zero data retention enabled, we cannot help you recover or debug past
+  requests. Make sure you store any data you need on your end.
+</Warning>
+
+Because prompts and outputs are not persisted, our support team will not be able to look up the content of previous requests on your behalf. If you need to retain records for your own auditing or debugging purposes, we recommend logging responses on your side before they leave your application.
+
+## Dashboard Indicator
+
+Once zero data retention is active on your account, a visible emblem will appear on your dashboard page above your account name confirming that data retention is disabled. We will also verify you through support once this is enabled.
+
+This indicator serves as a persistent confirmation that your account is operating under zero data retention. It is visible each time you log in, so you can always verify that the setting is active without needing to contact support. If the emblem is not visible and you believe it should be, reach out to our team to confirm your account status.
+
+<Frame caption="Zero data retention emblem on the dashboard">
+  <img
+    src="/images/retention-pic.png"
+    alt="Zero data retention badge on dashboard"
+  />
+</Frame>
+
+## No Training, No Sharing
+
+Regardless of your data retention setting, we are committed to the following principles:
+
+- **We do not share your data with third parties.** Your data is processed solely to fulfill your API requests. It is not sold, licensed, or otherwise made available to any external party under any circumstances.
+- **Metadata logging is minimal and content-free.** The request metadata we log includes only timestamps and token counts. It does not include any content from your prompts or outputs, and it cannot be used to reconstruct or infer the content of your requests.
+
+These commitments are foundational to how we operate and are not contingent on any specific account setting or plan. Every user benefits from these protections by default.

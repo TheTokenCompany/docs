@@ -39,7 +39,7 @@
         "groups": [
           {
             "group": "Docs",
-            "pages": ["index", "examples", "gzip", "protect-text", "python-sdk", "npm-sdk"]
+            "pages": ["index", "examples", "gzip", "protect-text", "python-sdk", "npm-sdk", "data-retention"]
           }
         ]
       }
